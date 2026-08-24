@@ -500,6 +500,16 @@ Step 4.3: 处理匹配结果
 
 ## DOCX Format Rules
 
+### 表格边框修补（MANDATORY）
+
+**NEVER 输出无边框表格的 DOCX**：pandoc 生成的 DOCX 使用内置 Table 样式且该样式无 tblBorders 定义，导致所有表格内外均无边框线，不符合课程标准排版规范。因此，在 pandoc 转换完成后，**必须立即运行边框修补脚本**：
+
+```bash
+python @path/scripts/patch_table_borders.py <生成的.docx路径>
+```
+
+该脚本会为文档中每个 w:tblPr 注入完整的单线全边框定义（top/left/bottom/right/insideH/insideV），脚本幂等可重复执行。若脚本不存在或执行失败，须用 python-docx 或直接操作 document.xml 手动为每个表格补齐 tblBorders，不得交付无边框版本。
+
 ### 样式规范
 
 | 元素 | 字体 | 字号 | 格式 |
@@ -561,6 +571,8 @@ Step 4.3: 处理匹配结果
 | Markdown 转 DOCX | pandoc + 参考模板控制样式 | python-docx 逐段构建 | pandoc 不可用或样式偏差过大时 |
 | 表格数据处理 | pandas | 原生 dict/list 操作 | 简单表格无需 DataFrame 时 |
 | 结构化文本识别 | regex | 字符串内置方法 | 模式简单时不需要正则 |
+
+**表格边框修补（MANDATORY）**：pandoc 转换完成后，必须运行 `@path/scripts/patch_table_borders.py` 为所有表格注入单线全边框。回退方案：python-docx 或直接操作 document.xml 补齐 tblBorders。
 
 ## Error Handling & Fallback Procedures
 
