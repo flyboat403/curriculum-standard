@@ -1,4 +1,4 @@
-﻿---
+---
 name: curriculum-standard
 description: "根据人才培养方案和专业教学标准生成符合中国职业教育规范的课程标准DOCX文档。**使用时机**：当需要创建包含以下特征的职业教育课程标准时：(1) 需要制作生成编制课程标准，(2) 基于任务驱动能力目标的项目化课程内容，(3) 建设学习情境设计的课程，(4) 需要标准结构和中国教育规范格式的课程，(5) 包含职教高考考点、课程思政、证书竞赛融合内容的课程。触发词：课程标准、人才培养方案、专业教学标准、职业教育、学习情境设计、课程目标、课程实施、课标、中国教育标准、岗课赛证考、学业质量、教学评价、课程结构、课程建设。"
 ---
@@ -529,7 +529,7 @@ Step 4.6: 下载与定位
 **NEVER 输出无边框表格的 DOCX**：pandoc 生成的 DOCX 使用内置 Table 样式且该样式无 tblBorders 定义，导致所有表格内外均无边框线，不符合课程标准排版规范。因此，在 pandoc 转换完成后，**必须立即运行边框修补脚本**：
 
 ```bash
-python @path/scripts/patch_table_borders.py <生成的.docx路径>
+python3 @path/scripts/patch_table_borders.py <生成的.docx路径>
 ```
 
 该脚本会为文档中每个 w:tblPr 注入完整的单线全边框定义（top/left/bottom/right/insideH/insideV），脚本幂等可重复执行。若脚本不存在或执行失败，须用 python-docx 或直接操作 document.xml 手动为每个表格补齐 tblBorders，不得交付无边框版本。

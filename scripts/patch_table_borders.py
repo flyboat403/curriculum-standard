@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """为 pandoc 生成的 DOCX 文档中的所有表格注入完整边框（内外部）。
 用法: python patch_table_borders.py <docx路径> [更多docx路径...]
 原理: pandoc 使用内置 Table 样式且该样式无 tblBorders，
