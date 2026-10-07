@@ -36,7 +36,8 @@ Use this skill when you need to:
 curriculum-standard/
 ├── SKILL.md                 # Main skill definition
 ├── assets/
-│   └── moe_pdfs_final.json  # MOE teaching standards index (579 records)
+│   ├── moe_pdfs_final.json    # MOE teaching standards index (579 records)
+│   └── moe_jianjie_final.json # MOE major profiles index (1268 records, option ② fallback)
 ├── examples/
 │   └── 课程标准模板.docx    # Default template
 └── references/
