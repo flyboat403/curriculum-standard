@@ -37,7 +37,7 @@ curriculum-standard/
 ├── SKILL.md                 # Main skill definition
 ├── assets/
 │   ├── moe_pdfs_final.json    # MOE teaching standards index (579 records, PDF, preferred)
-│   └── moe_jianjie_final.json # MOE major profiles index (1337 records, md, fallback when no standard)
+│   └── moe_jianjie_final.json # MOE major profiles index (1349 records, md, fallback when no standard)
 ├── examples/
 │   └── 课程标准模板.docx    # Default template
 └── references/

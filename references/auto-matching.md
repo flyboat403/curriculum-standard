@@ -49,7 +49,7 @@ for page in doc:
 import json, requests
 jianjie_index_path = "@path/assets/moe_jianjie_final.json"
 with open(jianjie_index_path, 'r', encoding='utf-8') as f:
-    jianjie = json.load(f)   # 1337条：major_code/major_name/education_level/md_url
+    jianjie = json.load(f)   # 1349条：major_code/major_name/education_level/md_url
 
 # 复用上面"搜索匹配"的同序逻辑：代码精确 → 名称模糊 → 层次筛选
 if major_code:
@@ -65,7 +65,7 @@ resp = requests.get(md_url, timeout=30)
 text = resp.text            # 直接得到文本，无需 fitz/PyMuPDF
 ```
 
-**注意**：1337条记录仅对应 **274个唯一md链接**（同一专业大类共用一份简介md）。取回文本后必须**按 `major_name` 定位该专业所在段落**，仅取该段落文本作为 Phase 1 来源，其余专业内容一律跳过。
+**注意**：1349条记录仅对应 **275个唯一md链接**（同一专业大类共用一份简介md）。取回文本后必须**按 `major_name` 定位该专业所在段落**，仅取该段落文本作为 Phase 1 来源，其余专业内容一律跳过。
 
 | 步骤 | 动作 |
 |------|------|

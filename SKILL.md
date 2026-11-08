@@ -25,7 +25,7 @@ description: "根据人才培养方案和专业教学标准生成符合中国职
 | `@path/references/learning-scenario-templates-new.md` | 学习情境设计的三种模板（岗课赛证考融合版/标准项目版/简化版） | **Phase 5: 在生成任何学习情境前必须完整读取** | Phase 1-4, 6-8 |
 | `@path/examples/课程标准模板.docx` | 默认课程标准模板（包含完整10章结构） | **Phase 0: 模板验证阶段必须检查** | 模板确认后无需重复读取 |
 | `@path/assets/moe_pdfs_final.json` | 教育部职业教育专业教学标准索引（579条记录，含专业代码/名称/教育层次/PDF链接） | **Phase 0: 当用户未提供专业教学标准时必须读取用于自动匹配** | 用户提供专业教学标准时 |
-| `@path/assets/moe_jianjie_final.json` | 教育部专业简介索引（1337条记录，含专业代码/名称/教育层次/简介md链接，托管于GitHub镜像） | **Phase 0: 仅当教学标准索引0命中且用户选择"② 使用专业简介替代专业教学标准"时必须读取（教学标准优先，本文件为后备）** | 用户已提供或已匹配到专业教学标准时，以及用户未选择该选项时 |
+| `@path/assets/moe_jianjie_final.json` | 教育部专业简介索引（1349条记录，含专业代码/名称/教育层次/简介md链接，托管于GitHub镜像） | **Phase 0: 仅当教学标准索引0命中且用户选择"② 使用专业简介替代专业教学标准"时必须读取（教学标准优先，本文件为后备）** | 用户已提供或已匹配到专业教学标准时，以及用户未选择该选项时 |
 | `@path/references/auto-matching.md` | 自动匹配专业教学标准的实现细节与错误处理 | **Phase 0: 仅在用户未提供专业教学标准且需自动匹配时读取** | 用户提供专业教学标准时，以及所有其他阶段 |
 | `@path/references/error-handling.md` | 全局故障决策树与回退策略（5类故障） | **任意阶段：出现故障或异常时读取对应故障节** | 无故障时不加载 |
 | `@path/references/assessment-tables.md` | 学业水平评价评分标准与权重规范（含权重分配原则） | **Phase 8: 在生成任何评价表前必须完整读取** | Phase 1-7 |
@@ -59,7 +59,7 @@ description: "根据人才培养方案和专业教学标准生成符合中国职
 |----------|------|------|
 | 课程标准模板 | `@path/examples/课程标准模板.docx` | 默认课程标准模板（包含完整10章结构） |
 | 专业教学标准索引 | `@path/assets/moe_pdfs_final.json` | 教育部职业教育专业教学标准索引（579条记录）——**首选来源** |
-| 专业简介索引 | `@path/assets/moe_jianjie_final.json` | 教育部专业简介索引（1337条记录），**仅当**专业教学标准（PDF）缺失时经用户确认后的替代来源 |
+| 专业简介索引 | `@path/assets/moe_jianjie_final.json` | 教育部专业简介索引（1349条记录），**仅当**专业教学标准（PDF）缺失时经用户确认后的替代来源 |
 
 **自动匹配逻辑**：
 
@@ -175,11 +175,11 @@ Step 4.3: 处理匹配结果
 
 ```
 Step 4.4: 读取简介索引
-读取 @path/assets/moe_jianjie_final.json（1337条，字段：major_code/major_name/education_level/md_url）
+读取 @path/assets/moe_jianjie_final.json（1349条，字段：major_code/major_name/education_level/md_url）
 
 Step 4.5: 匹配简介
 与 Step 4.2 同序：专业代码精确匹配 → 专业名称模糊匹配 → 教育层次筛选
-注意：1337条记录仅对应274个唯一md链接，同一专业大类共用一份简介md
+注意：1349条记录仅对应275个唯一md链接，同一专业大类共用一份简介md
 
 Step 4.6: 下载与定位
 按 md_url 下载md文档（纯文本，无需PDF解析）→ 定位用户专业名称所在段落（其余专业内容跳过）

@@ -10,7 +10,7 @@
 - `references/learning-scenario-templates-new.md` — 学习情境设计的三种模板，Phase 5 生成情境前必须完整读取
 - `examples/课程标准模板.docx` — 默认 10 章课程标准模板，Phase 0 校验
 - `assets/moe_pdfs_final.json` / `.md` — 教育部 579 条专业教学标准索引（专业代码/名称/教育层次/PDF 链接，PDF 托管于 GitHub 镜像仓库），**首选来源**
-- `assets/moe_jianjie_final.json` — 教育部 1337 条专业简介索引（专业代码/名称/教育层次/简介 md 链接），**仅当**专业教学标准缺失（0 命中）且用户选择选项②时才使用（教学标准优先）
+- `assets/moe_jianjie_final.json` — 教育部 1349 条专业简介索引（专业代码/名称/教育层次/简介 md 链接），**仅当**专业教学标准缺失（0 命中）且用户选择选项②时才使用（教学标准优先）
 
 ## 使用与验证
 
