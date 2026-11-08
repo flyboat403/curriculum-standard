@@ -9,15 +9,17 @@
 - `SKILL.md` — 技能主文件，定义工作流、阶段决策树与规范，是所有阶段的主参考
 - `references/learning-scenario-templates-new.md` — 学习情境设计的三种模板，Phase 5 生成情境前必须完整读取
 - `examples/课程标准模板.docx` — 默认 10 章课程标准模板，Phase 0 校验
-- `assets/moe_pdfs_final.json` — 教育部 579 条专业教学标准索引（专业代码/名称/教育层次/PDF 链接，PDF 托管于 GitHub 镜像仓库），**首选来源**
+- `assets/moe_pdfs_final.json` — 教育部 579 条专业教学标准索引（专业代码/名称/教育层次/PDF 链接，托管于 GitHub 镜像仓库且 URL 钉扎 commit SHA），**首选来源**
 - `assets/moe_jianjie_final.json` — 教育部 1349 条专业简介索引（专业代码/名称/教育层次/简介 md 链接），**仅当**专业教学标准缺失（0 命中）且用户选择选项②时才使用（教学标准优先）
 
 ## 使用与验证
 
-本仓库无源代码、无自动化测试。改动通过实际运行技能验证：
+除 `scripts/` 下的工具脚本外无应用源代码。改动通过实际运行技能 + 索引校验脚本验证：
 
+- 修改 `assets/` 后运行 `python3 scripts/validate_indexes.py`，通过后以脚本输出为准同步 SKILL.md / README.md / AGENTS.md 中的条数
+- 上游镜像仓库更新时：`git ls-remote` 获取新 commit SHA → 替换索引 URL 中的 `/raw/<旧SHA>/` → 更新校验脚本 expected → 跑校验 → 同步文档
 - 用训练计划文件触发技能，检查输出的 DOCX 是否符合 10 章结构与文档内的核心原则
-- 修改 `references/` 或 `assets/` 后，运行对应阶段，确认 `SKILL.md` 中的加载规则未被破坏
+- 修改 `references/` 后，运行对应阶段，确认 `SKILL.md` 中的加载规则未被破坏
 
 ## 编写规范
 
