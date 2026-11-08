@@ -20,6 +20,8 @@ Thumbs.db
 *.docx
 *.pdf
 !examples/*.docx
+# 脚本临时产物必须在 examples 反向排除之后声明，确保始终被忽略
+*.tmp.docx
 
 # Logs
 *.log

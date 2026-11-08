@@ -33,9 +33,16 @@ if not matches:
 ## 下载 PDF（用户确认后执行）
 ```python
 import requests
-response = requests.get(pdf_url, timeout=30)
+MAX_PDF_BYTES = 50 * 1024 * 1024   # 50MB 上限，超限立即中止（不重试）
+response = requests.get(pdf_url, timeout=30, stream=True)
 if response.status_code == 200:
-    pdf_content = response.content
+    chunks, size = [], 0
+    for chunk in response.iter_content(chunk_size=8192):
+        size += len(chunk)
+        if size > MAX_PDF_BYTES:
+            raise OSError("PDF超过50MB上限 → 走 error-handling.md 故障4")
+        chunks.append(chunk)
+    pdf_content = b"".join(chunks)
     # 保存到临时目录
 ```
 
@@ -74,18 +81,24 @@ if not matches:
 
 # 命中后取 md_url —— 简介是 md 纯文本，不是 PDF，不走上面的"下载/解析 PDF"两节
 md_url = matches[0]['md_url']
+MAX_MD_BYTES = 1024 * 1024         # 1MB 上限（实际文件约 5-60KB）
 text = None
 for _ in range(3):                    # 首发 + 重试2次，对齐下表步骤2与错误处理表
     try:
-        resp = requests.get(md_url, timeout=30)
+        resp = requests.get(md_url, timeout=30, stream=True)
         resp.raise_for_status()       # 404/500 错误页不得当作正文
-        resp.encoding = "utf-8"       # 不依赖服务器 charset，防中文乱码
-        text = resp.text              # 直接得到文本，无需 fitz/PyMuPDF
+        chunks, size = [], 0
+        for chunk in resp.iter_content(chunk_size=8192):
+            size += len(chunk)
+            if size > MAX_MD_BYTES:
+                raise OSError("简介md超过1MB上限 → 走 error-handling.md 故障4")  # 非网络错误，不重试
+            chunks.append(chunk)
+        text = b"".join(chunks).decode("utf-8", errors="replace")  # 不依赖服务器 charset
         break
     except requests.RequestException:  # 只吞网络类错误，编程错误立即暴露
         time.sleep(2)
 if text is None:
-    raise IOError("简介md下载失败（已重试2次）→ 走 error-handling.md 故障4")
+    raise OSError("简介md下载失败（已重试2次）→ 走 error-handling.md 故障4")
 ```
 
 **注意**：1349条记录仅对应 **275个唯一md链接**（同一专业大类共用一份简介md）。取回文本后必须**按 `major_name` 定位该专业所在段落**，仅取该段落文本作为 Phase 1 来源，其余专业内容一律跳过。
@@ -110,5 +123,6 @@ if text is None:
 | PDF 下载失败 | 重试 2 次，失败后提示用户手动提供 |
 | PDF 解析失败 | 尝试备用解析方案，失败后提示用户 |
 | 网络超时 | 提示用户检查网络或手动上传文件 |
+| 下载内容超过大小上限 | 立即中止（不重试），走 error-handling.md 故障4 |
 | 简介索引不存在 | 提示用户提供专业教学标准文件（选项1），或选择忽略（选项3） |
 | 简介md中定位不到该专业 | 重试1次后仍失败 → 走 error-handling.md 故障4，询问用户上传文件或忽略 |

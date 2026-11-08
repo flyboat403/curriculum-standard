@@ -19,26 +19,34 @@ BORDERS = ('<w:tblBorders>'
 def patch(path):
     tmp = path + '.tmp.docx'
     patched = 0
-    with zipfile.ZipFile(path) as zin, zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as zout:
-        for item in zin.namelist():
-            data = zin.read(item)
-            if item == 'word/document.xml':
-                xml = data.decode('utf-8')
-                parts = re.split(r'(<w:tblPr\b.*?</w:tblPr>)', xml, flags=re.S)
-                out = []
-                for p in parts:
-                    if p.startswith('<w:tblPr'):
-                        if '<w:tblBorders' in p:
-                            out.append(p)
+    try:
+        with zipfile.ZipFile(path) as zin, zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as zout:
+            for item in zin.namelist():
+                data = zin.read(item)
+                if item == 'word/document.xml':
+                    xml = data.decode('utf-8')
+                    parts = re.split(r'(<w:tblPr\b.*?</w:tblPr>)', xml, flags=re.S)
+                    out = []
+                    for p in parts:
+                        if p.startswith('<w:tblPr'):
+                            if '<w:tblBorders' in p:
+                                out.append(p)
+                            else:
+                                # 插入到 tblW/tblLayout/tblCellMar 之后、</w:tblPr> 之前
+                                out.append(p.replace('</w:tblPr>', BORDERS + '</w:tblPr>'))
+                                patched += 1
                         else:
-                            # 插入到 tblW/tblLayout/tblCellMar 之后、</w:tblPr> 之前
-                            out.append(p.replace('</w:tblPr>', BORDERS + '</w:tblPr>'))
-                            patched += 1
-                    else:
-                        out.append(p)
-                data = ''.join(out).encode('utf-8')
-            zout.writestr(zin.getinfo(item), data)
-    shutil.move(tmp, path)
+                            out.append(p)
+                    data = ''.join(out).encode('utf-8')
+                zout.writestr(zin.getinfo(item), data)
+        shutil.move(tmp, path)
+    finally:
+        # 异常中断时清理临时文件，避免残留 *.tmp.docx
+        if os.path.exists(tmp):
+            try:
+                os.remove(tmp)
+            except OSError:
+                pass
     print(f'{os.path.basename(path)}: patched {patched} tables -> {path}')
 
 if __name__ == '__main__':
