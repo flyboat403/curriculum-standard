@@ -40,7 +40,7 @@ if response.status_code == 200:
     for chunk in response.iter_content(chunk_size=8192):
         size += len(chunk)
         if size > MAX_PDF_BYTES:
-            raise OSError("PDF超过50MB上限 → 走 error-handling.md 故障4")
+            raise OSError("PDF超过50MB上限 → 走 error-handling.md 故障6")
         chunks.append(chunk)
     pdf_content = b"".join(chunks)
     # 保存到临时目录
@@ -77,7 +77,7 @@ else:
 if education_level:
     matches = [m for m in matches if m['education_level'] == education_level]
 if not matches:
-    raise LookupError("简介索引0命中 → 走 references/error-handling.md 故障4")  # 禁止 matches[0]
+    raise LookupError("简介索引0命中 → 走 references/error-handling.md 故障6")  # 禁止 matches[0]
 
 # 命中后取 md_url —— 简介是 md 纯文本，不是 PDF，不走上面的"下载/解析 PDF"两节
 md_url = matches[0]['md_url']
@@ -91,29 +91,29 @@ for _ in range(3):                    # 首发 + 重试2次，对齐下表步骤
         for chunk in resp.iter_content(chunk_size=8192):
             size += len(chunk)
             if size > MAX_MD_BYTES:
-                raise OSError("简介md超过1MB上限 → 走 error-handling.md 故障4")  # 非网络错误，不重试
+                raise OSError("简介md超过1MB上限 → 走 error-handling.md 故障6")  # 非网络错误，不重试
             chunks.append(chunk)
         text = b"".join(chunks).decode("utf-8", errors="replace")  # 不依赖服务器 charset
         break
     except requests.RequestException:  # 只吞网络类错误，编程错误立即暴露
         time.sleep(2)
 if text is None:
-    raise OSError("简介md下载失败（已重试2次）→ 走 error-handling.md 故障4")
+    raise OSError("简介md下载失败（已重试2次）→ 走 error-handling.md 故障6")
 ```
 
 **注意**：1349条记录仅对应 **275个唯一md链接**（同一专业大类共用一份简介md）。取回文本后必须**按 `major_name` 定位该专业所在段落**，仅取该段落文本作为 Phase 1 来源，其余专业内容一律跳过。
 
 | 步骤 | 动作 |
 |------|------|
-| 1 | 读取 `moe_jianjie_final.json` 并按上序匹配；0命中 → 走故障4（禁止 `matches[0]`） |
+| 1 | 读取 `moe_jianjie_final.json` 并按上序匹配；0命中 → 走故障6（禁止 `matches[0]`） |
 | 2 | 用 `md_url` 下载md文档（失败重试2次），直接取 `resp.text` |
 | 3 | 按 `major_name` 定位所在段落（md 为纯文本，**无需 fitz**） |
 | 4 | 该段落文本 + 人才培养方案 → 交 Phase 1 提取 |
-| 5 | 定位不到该专业 → 视同下载失败，走"故障4"并询问用户 |
+| 5 | 定位不到该专业 → 视同下载失败，走"故障6"并询问用户 |
 
 ## 依赖库均为"可选"
 `requests`、`fitz`(PyMuPDF)、`pandas`、`pdfplumber`/`PyPDF2` 仅用于 PDF 文本提取与表格处理。其中**专业简介（md）只需 `requests`，不依赖 `fitz`**；`fitz` 仅用于专业教学标准 PDF。若环境缺少某库：
-- 下载/解析失败 → 走 references/error-handling.md 的"故障1/故障4"决策树
+- 下载/解析失败 → 走 references/error-handling.md 的"故障1/故障6"决策树
 - 无法解析 → 询问用户提供文本版或截图，禁止静默跳过
 
 ## 错误处理
@@ -123,6 +123,6 @@ if text is None:
 | PDF 下载失败 | 重试 2 次，失败后提示用户手动提供 |
 | PDF 解析失败 | 尝试备用解析方案，失败后提示用户 |
 | 网络超时 | 提示用户检查网络或手动上传文件 |
-| 下载内容超过大小上限 | 立即中止（不重试），走 error-handling.md 故障4 |
+| 下载内容超过大小上限 | 立即中止（不重试），走 error-handling.md 故障6 |
 | 简介索引不存在 | 提示用户提供专业教学标准文件（选项1），或选择忽略（选项3） |
-| 简介md中定位不到该专业 | 重试1次后仍失败 → 走 error-handling.md 故障4，询问用户上传文件或忽略 |
+| 简介md中定位不到该专业 | 重试1次后仍失败 → 走 error-handling.md 故障6，询问用户上传文件或忽略 |

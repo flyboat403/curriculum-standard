@@ -28,7 +28,7 @@ Use this skill when you need to:
 |-------|------|----------|-------------|
 | training_plan | PDF/DOCX/MD | ✅ | Training plan document |
 | teaching_standard | PDF/DOCX/MD | ❌ | Professional teaching standard (auto-matched if not provided) |
-| template_docx | PDF/DOCX/MD | ❌ | Curriculum standard template |
+| template_docx | DOCX | ❌ | Curriculum standard template |
 
 ## Directory Structure
 
